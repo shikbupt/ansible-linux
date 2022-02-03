@@ -1,0 +1,4 @@
+---
+# defaults file for chinainit
+timezone_name: Asia/Shanghai 
+sources_list: Ali

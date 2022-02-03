@@ -1,0 +1,13 @@
+---
+# vars file for InstallApp
+requirement_app:
+  - zsh
+  - git
+  - autojump
+  - avahi-daemon
+  - make
+  - gcc
+  - binutils
+  - build-essential
+  - bison
+  - yadm

@@ -1,0 +1,10 @@
+---
+# tasks file for InstallApp
+- name: Install Requirement App
+  apt:
+    name: "{{requirement_app}}"
+
+- name: Install Additional App
+  apt:
+    name: "{{ additional_app }}"
+  when: additional_app | length > 0

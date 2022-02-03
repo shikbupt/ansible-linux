@@ -1,0 +1,15 @@
+
+# 目标主机
+target_host: vagrant
+user_name: vagrant
+group_name: wheel
+hostname: ansible-test.local
+
+# 科学上网需要:
+# DNS, 网关地址
+need_fightGW: true
+pi_address: 192.168.1.3
+# 主机需要设置的静态地址
+self_address: 192.168.1.6/24
+
+additional_app: []

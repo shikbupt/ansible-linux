@@ -1,0 +1,5 @@
+---
+# defaults file for FightGW
+
+pi_address: 192.168.1.3 
+self_address: 192.168.1.222/24

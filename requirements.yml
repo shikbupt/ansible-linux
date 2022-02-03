@@ -1,0 +1,7 @@
+---
+roles:
+  # Install a role from Ansible Galaxy.
+  - name: mrlesmithjr.netplan
+    src: https://github.com/mrlesmithjr/ansible-netplan
+    version: master
+  - name: erbap.systemd_resolved

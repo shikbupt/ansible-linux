@@ -1,0 +1,14 @@
+---
+# tasks file for DecorateShell
+- name: install dotfiles
+  shell: 
+    cmd: yadm clone -f --no-bootstrap git@github.com:shikbupt/dotfiles.git
+
+- name: install antigen
+  git:
+    repo: https://github.com/zsh-users/antigen.git
+    dest: ".antigen"
+    version: v2.2.3
+
+- name: install starship
+  shell: sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes

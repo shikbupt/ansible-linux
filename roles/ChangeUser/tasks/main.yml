@@ -1,0 +1,32 @@
+---
+# tasks file for ChangeUser
+- name: Make sure we have a group
+  group:
+    name: '{{ group_name }}'
+    state: present
+
+- name: sudo without password for new group
+  copy:
+    content: "%{{group_name}} ALL=(ALL:ALL) NOPASSWD: ALL\n"
+    dest: /etc/sudoers.d/{{ group_name }}
+    mode: 0440
+
+- name: add new user
+  user:
+    name: '{{ user_name }}'
+    shell: /bin/zsh
+    groups: '{{ group_name }}'
+    append: yes
+
+- name: set hostname
+  hostname:
+    name: "{{ hostname }}"
+
+- name: add ssh file
+  become_user: "{{user_name}}"
+  become: yes
+  copy: 
+    src: ssh/
+    dest: .ssh/
+    mode: u=rw,g=,o=
+

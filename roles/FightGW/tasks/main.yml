@@ -1,0 +1,38 @@
+---
+# tasks file for FightGW
+
+- name: Change DNS
+  import_role:
+    name: erbap.systemd_resolved   
+  vars:
+    systemd_resolved_servers: ["{{ pi_address }}"]
+    systemd_resolved_cache: True
+    systemd_resolved_read_etc_hosts: True
+    systemd_resolved_dnssec: True
+    systemd_resolved_dns_stub_listener: True
+
+- name: Change IP and Getaway
+  import_role:
+    name: mrlesmithjr.netplan
+  vars: 
+    netplan_enabled: true
+    netplan_config_file: /etc/netplan/01-netcfg.yaml
+    netplan_renderer: networkd
+    netplan_remove_existing: false
+    netplan_configuration:
+      network:
+        version: 2
+        ethernets:
+          eth0:
+            dhcp4: true
+            dhcp6: false
+            optional: true
+            nameservers:
+              addresses: [114.114.114.114]
+          eth1:
+            addresses: ["{{ self_address }}"]
+            dhcp4: false
+            dhcp6: false
+            gateway4: "{{ pi_address }}"
+            nameservers:
+              addresses: ["{{ pi_address }}"]

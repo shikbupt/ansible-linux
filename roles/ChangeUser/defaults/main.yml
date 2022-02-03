@@ -1,0 +1,5 @@
+---
+# defaults file for ChangeUser
+user_name: vagrant
+group_name: wheel
+hostname: ansible.local

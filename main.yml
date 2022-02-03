@@ -1,0 +1,87 @@
+- name: Validity
+  hosts: "{{target_host}}"
+  vars_files: config.yml
+  tasks:
+    - name: Check target os
+      assert:
+        that: "{{true if ansible_os_family in ['Debian',] else false}}"
+        fail_msg: |
+          "target os is: Debian. but now is"
+          "{{ ansible_os_family }}-{{ ansible_distribution }}-{{ansible_distribution_release}}"
+        success_msg:  |
+          "target os is: {{ ansible_os_family }}-{{ ansible_distribution }}-{{ansible_distribution_release}}"
+          "product_name: {{ansible_product_name}}"
+          "architecture: {{ansible_architecture}}"
+          "processor: {{ansible_processor}}"
+          "processor_cores: {{ansible_processor_cores}}"
+          "processor_vcpus: {{ansible_processor_vcpus}}"
+          "memtotal: {{ansible_memtotal_mb}} MB"
+
+- name: Customize System
+  hosts: "{{target_host}}"
+  vars_files: config.yml
+  become: yes
+  roles:
+    - role: FightGW
+      when: need_fightGW
+
+    - role: ChinaLocallazation
+
+    - role: ChangeUser
+
+- name: Basicly Install App 
+  hosts: "{{target_host}}"
+  vars_files: config.yml
+  roles:
+    - role: InstallApp
+      become: yes
+
+    - role: DecorateShell
+      become_user: "{{user_name}}"
+      become: yes
+
+
+- name: Greedily Install App 
+  hosts: "{{target_host}}"
+  vars_files: config.yml
+  become_user: "{{user_name}}"
+  become: yes
+  tags: Greedy
+  tasks:
+    - name: Install Miniconda
+      vars:
+        conda_url: https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh
+      shell:
+        cmd: wget {{ conda_url }} -O $HOME/miniconda.sh && bash $HOME/miniconda.sh -b -p $HOME/.miniconda3
+        executable: /bin/bash
+      when: ansible_system == 'Linux'
+
+    - name: Install Golang
+      vars:
+        golang_version: go1.17
+      block:
+        - name: Install gvm
+          shell:
+            cmd: bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+            executable: /bin/bash
+        - name: Install golang
+          shell:
+            cmd: source .zshrc && gvm install {{golang_version}} -B && gvm use {{golang_version}} --default
+            executable: /bin/zsh
+            
+    - name: Install Node and others
+      block:
+        - name: Install Nvm
+          git:
+            repo: https://github.com/nvm-sh/nvm.git
+            dest: ".nvm"
+            version: v0.39.1
+        - name: Install Node
+          shell:
+            cmd: source .zshrc && nvm install --lts
+            executable: /bin/zsh
+        - name: Install js app
+          shell:
+            cmd: source .zshrc && npm install -g git-split-diffs
+            executable: /bin/zsh
+      
